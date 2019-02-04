@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1, maximum-scale=1.0, user-scalable=no">
+    <title>Demo: Auto-Complete</title>
+    <script src="../dist/flexsearch.min.js"></script>
+    <script src="../data/movies.js"></script>
+    <style>
+        table{
+            width: 300px;
+            table-layout: fixed;
+        }
+        td, tr{
+            border: none;
+        }
+        input{
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            outline: none;
+            background-color: #f5f5f5;
+        }
+        input, div{
+            padding:5px 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        #suggestions div{
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body>
+<table>
+    <tr>
+        <td>
+            <input type="text" placeholder="Search by movie title ..." onkeyup="show_results.call(this);">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="suggestions"></div>
+        </td>
+    </tr>
+</table>
+<script>
+    (function(){
+
+        var index = new FlexSearch({
+
+            encode: "advanced",
+            tokenize: "reverse",
+            suggest: true
+        });
+
+        var container = document.getElementById("suggestions");
+
+        for(var i = 0; i < data.length; i++){
+
+            index.add(i, data[i]);
+        }
+
+        window.show_results = function(){
+
+            var results = index.search(this.value, 10);
+            var fragment = document.createDocumentFragment();
+            var entry, tmp;
+
+            for(var i = 0; i < results.length; i++){
+
+                entry = document.createElement("div");
+                entry.textContent = data[results[i]];
+                fragment.appendChild(entry);
+            }
+
+            while((tmp = container.firstChild)){
+
+                container.removeChild(tmp)
+            }
+
+            container.appendChild(fragment);
+        };
+
+    }());
+</script>
+</body>
+</html>
